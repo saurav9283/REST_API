@@ -1,11 +1,11 @@
 const userModel = require("../Modol/User.js");
+const jwt = require("jsonwebtoken");
 exports.signupUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    const usernameCheck = await userModel.findOne({username})
-    if(usernameCheck)
-    {
-        return res.status(203).json("User already exist")
+    const usernameCheck = await userModel.findOne({ username });
+    if (usernameCheck) {
+      return res.status(203).json("User already exist");
     }
     if (username && email && password) {
       const newUser = new userModel({ username, email, password });
@@ -30,7 +30,12 @@ exports.loginUser = async (req, res) => {
         return res.status(201).json({ message: "User not Found" });
       }
       if (user.password === password) {
-        return res.status(200).json({ message: "Login Sucessfully", user });
+        const token = jwt.sign({ id: user._id }, "saurav");
+        // console.log(token)
+         return res.cookie("access_token", token, { httpOnly: true }).status(200).json({
+          message: "Login in",
+          token,
+        });
       }
 
       return res.status(202).json({ message: "Password incurrect" });
