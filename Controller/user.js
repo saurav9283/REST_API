@@ -1,0 +1,81 @@
+const userModel = require("../Modol/User.js");
+exports.signupUser = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    const usernameCheck = await userModel.findOne({username})
+    if(usernameCheck)
+    {
+        return res.status(203).json("User already exist")
+    }
+    if (username && email && password) {
+      const newUser = new userModel({ username, email, password });
+      await newUser.save();
+
+      res.status(201).json({ message: "Data saved successfully" });
+    } else {
+      res.status(400).json({ message: "Invalid data" });
+    }
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.loginUser = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (username && password) {
+      const user = await userModel.findOne({ username });
+      if (!user) {
+        return res.status(201).json({ message: "User not Found" });
+      }
+      if (user.password === password) {
+        return res.status(200).json({ message: "Login Sucessfully", user });
+      }
+
+      return res.status(202).json({ message: "Password incurrect" });
+    } else {
+      return res.status(400).json({ message: "Invalid data" });
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await userModel.find();
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedUser = await userModel.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await userModel.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: "Delete Sucessfully" });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
