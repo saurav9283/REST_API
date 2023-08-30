@@ -1,5 +1,7 @@
 const userModel = require("../Modol/User.js");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
 exports.signupUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -84,3 +86,28 @@ exports.deleteUser = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+exports.forgotPassword = async (req, res) => {
+    try {
+      const { email } = req.body;
+      const user = await userModel.findOne({ email });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      const resetToken = crypto.randomBytes(32).toString("hex");
+    //   console.log(resetToken)
+      user.resetToken = resetToken;
+      user.resetTokenExpiration = Date.now() + 3600000; // Token expires in 1 hour
+      await user.save();
+    
+      return res.status(200).json({ message: "Reset token generated and sent" , resetToken });
+    } catch (error) {
+      console.log("error", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+  
