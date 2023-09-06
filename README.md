@@ -23,4 +23,8 @@ To start the Auth module in your application, follow these steps:
 This command will use nodemon to monitor changes and automatically restart the app when files are modified.
 
 
+<<<<<<< HEAD
+=======
+<img width="959" alt="Screenshot 2023-08-31 111709" src="https://github.com/saurav9283/REST_API/assets/87579538/e46f1122-1316-4927-b393-c9f4f32fcf5f">
+>>>>>>> 06bce2695ac9fd8dae1583e3c059d5bfe5b9dae2
 
